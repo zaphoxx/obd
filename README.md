@@ -13,9 +13,17 @@ optional arguments:
   -p PORT           serial port e.g. COM7,COM14
   -b BAUDRATE       baudrate of serial
   -c CMD [CMD ...]  AT command to send
-  -d DELIM          delimiter
+  -d DELIM          delimiter 
 
 ```
+you might need or just want to adjust how the OBDLink tool responds e.g. turning echo of the command on/off or turning linefeed on/off. If you change these settings you might need to adjust the script for that. e.g.
+```
+AT E1/E0 # turn echo on/off
+AT L1/L0 # turn linefeed on/off
+```
+for more information on the available AT and ST commands please refer to 
+ - https://www.elmelectronics.com/wp-content/uploads/2017/01/ELM327DS.pdf
+ - https://cdn.sparkfun.com/datasheets/Widgets/stn1110-ds.pdf
 
 example for script usage:
 
