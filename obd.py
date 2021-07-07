@@ -40,7 +40,7 @@ def main():
 def interactive(ser, args):
     print("Entering interactive mode! Press 'x' to exit!")
     while(1):
-        command = input("> ")
+        command = input("> ").lower()
         if command == 'x':
             break
         send_cmd(ser, command)
@@ -50,10 +50,11 @@ def interactive(ser, args):
             print_data(data)
             if args.outfile != None:
                 save_data(args.outfile,data)
-            if ser.in_waiting < 1 and command != 'ATMA' and command != 'AT MA' and  command != 'STMA' and command != 'ST MA': 
+            if ser.in_waiting < 1 and command != 'atma' and command != 'at ma' and  command != 'stma' and command != 'st ma': 
                 break
-            cont = (keyboard.read_key() == 'esc')
+            cont = (keyboard.read_key() == 'space' or keyboard.read_key() == 'esc')
         else:
+            print('\r',end='\x7f')
             send_cmd(ser, '\r\n')
             data = recv_data(ser)
             print_data(data)
