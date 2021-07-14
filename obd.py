@@ -20,12 +20,9 @@ def main():
 
     for n in range(len(args.cmd)):
         send_cmd(ser, args.cmd[n])
+        
         while(1):
             data = recv_data(ser)
-        
-            print_data(data)
-            if args.outfile != None:
-                save_data(args.outfile,data)
             if ser.in_waiting < 1:
                 break
     
@@ -45,24 +42,28 @@ def interactive(ser, args):
             break
         send_cmd(ser, command)
         cont = False
-        while(cont == False):
+        while(1):
             data = recv_data(ser)
-            print_data(data)
-            if args.outfile != None:
-                save_data(args.outfile,data)
+            #print(data)            
+            #print_data(data)
+            #if args.outfile != None:
+            #    save_data(args.outfile,data)
             if ser.in_waiting < 1 and command != 'atma' and command != 'at ma' and  command != 'stma' and command != 'st ma': 
                 break
-            cont = (keyboard.read_key() == 'space' or keyboard.read_key() == 'esc')
+            #cont = (keyboard.read_key() == 'space' or keyboard.read_key() == 'esc')
+            if (keyboard.read_key() == 'space'):
+                print("x"*20)
+                break            
+            #send_cmd(ser, '\r\n')
         else:
             print('\r',end='\x7f')
             send_cmd(ser, '\r\n')
-            data = recv_data(ser)
-            print_data(data)
+            recv_data(ser)
+            
+            #print_data(data)
 
 
 def send_cmd(ser, cmd):
-    #print(F"{Fore.GREEN}[+]{Fore.WHITE} Sending command \'{cmd}\' ...")
-    # string all commands together and add '\r\n' so each command gets send seperately
     cmd += F"\r"
     ser.write(cmd.encode('latin-1'))
 
@@ -70,9 +71,16 @@ def send_cmd(ser, cmd):
 def recv_data(ser):
     buffer = b""
     parts = []
-    buffer = ser.read_until(b'>')
-    #print(buffer)
-    parts = buffer.split(b'\r')
+    buffer = ser.read(256)
+    print(buffer.decode('latin-1'))   
+    parts.append(buffer)    
+    while ser.in_waiting > 0:            
+        buffer = ser.read(256)
+        parts.append(buffer)
+        if keyboard.read_key() == 'esc':
+            ser.write(b'\r\n')
+            break
+        print(buffer.decode('latin-1'))
     return parts
 
 
